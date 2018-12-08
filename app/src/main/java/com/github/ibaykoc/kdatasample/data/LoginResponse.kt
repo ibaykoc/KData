@@ -1,19 +1,19 @@
 package com.github.ibaykoc.kdatasample.data
 
-import com.github.ibaykoc.kdataannotation.KRawData
+import com.github.ibaykoc.kdataannotation.KData
 
-@KRawData("LoginValid")
+@KData("LoginValid")
 data class LoginResponse (
     val status: Boolean?,
-    @KRawData.ValidateParentField
+    @KData.ParentField
     val account: Account?,
     val last_login: String?
 )
 
 data class Account(
-    @KRawData.ValidateField("firstName")
+    @KData.Field("firstName")
     val first_name: String?,
 
-    @KRawData.ValidateField("lastName")
+    @KData.Field("lastName", allowNull = true)
     val last_name: String?
 )
