@@ -27,7 +27,7 @@
 ------------
 
 ## The problem\...
-Imagine you have **raw data** from API response like this:
+Imagine you have *raw* data from API response and you set all field to be nullable because you don't trust any of the code that you cannot control, so your data class would look like this:
 ```kotlin
 data class LoginResponse (
     val status: Boolean?,
