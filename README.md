@@ -135,8 +135,9 @@ output:
 $ null
 ```
 
-------------
+See other <a href="https://github.com/ibaykoc/KData/wiki/Example-Usages">example usages</a>
 
+------------
 
 
 # Implementation
@@ -156,6 +157,7 @@ Then add this two dependencies to your module:
   implementation 'com.github.ibaykoc.KData:kdataannotation:v0.1.0-alpha'
   kapt 'com.github.ibaykoc.KData:kdataprocessor:v0.1.0-alpha''
 ```
+
 PS: If you have any suggestions or bugs, please create issues or Pull Requests.
 
 **Enjoy!**
