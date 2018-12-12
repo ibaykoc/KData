@@ -26,7 +26,7 @@
 
 ------------
 
-## The problem\...
+# The problem\...
 Imagine you have *raw* data from API response and you set all field to be nullable because you don't trust any of the code that you cannot control, so your data class would look like this:
 ```kotlin
 data class LoginResponse (
@@ -61,10 +61,10 @@ That would work, but imagine if you have a lot of data, then you have to write a
 ------------
 
 
-## KData do this for you\...
+# KData do this for you\...
 With `@KData` you don't need to write all of the validation, because `@KData` will do all of that for you.
 
-#### First
+### First
 - Add `@KData` annotation to your *raw* data class,
 - Pass the name that will be the name of the valid data class to `validatedClassName` parameter
 
@@ -78,7 +78,7 @@ data class LoginResponse (
     val last_login: String?
 )
 ```
-#### Second
+### Second
 - Tell `@Kdata` which field to validate by using `@KData.Field` annotation
 - Pass the name that will be the name of the field in the validated data class to `validatedFieldName` parameter
 
@@ -96,7 +96,7 @@ data class LoginResponse (
 )
 ```
 Then rebuild your project.
-#### Thats it!
+### Thats it!
 
 To validate *raw data* you just need to call **`.validate()`** on your *raw data* instance
 ```kotlin
@@ -116,7 +116,7 @@ output:
 $ LoginUiData(firstName=Jane, lastName=Doe)
 ```
 
-#### What if one of the needed field is **null**?
+### What if one of the needed field is **null**?
 ```kotlin
 ...
 val loginResponse = LoginResponse(
@@ -138,7 +138,7 @@ $ null
 
 
 
-## Implementation
+# Implementation
 Add this code to your build.gradle in project level:
 ```
 allprojects {
