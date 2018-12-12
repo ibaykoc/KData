@@ -23,7 +23,7 @@ class NestedRawDataValidationTest {
     )
 
     @Test
-    fun `Test simple raw data valid`() {
+    fun `Test nested raw data valid`() {
         val nestedRawData = NestedRawData(
             account = Account(
                 status = null,
@@ -42,7 +42,7 @@ class NestedRawDataValidationTest {
     }
 
     @Test
-    fun `Test simple raw data not valid`() {
+    fun `Test nested raw data not valid`() {
         val nestedRawData = NestedRawData(
             account = Account(
                 status = null,
@@ -75,7 +75,7 @@ class NestedRawDataValidationTest {
     }
 
     @Test
-    fun `Test simple raw data allow null`() {
+    fun `Test nested raw data allow null`() {
         val nestedRawData = NestedRawData(
             account = Account(
                 status = null,
