@@ -65,9 +65,9 @@ That would work, but imagine if you have a lot of data, then you have to write a
 With `@KData` you don't need to write all of the validation, because `@KData` will do all of that for you.
 
 ### First
-- Add `@KData` annotation to your *raw* data class,
-- Pass the name that will be the name of the valid data class to `validatedClassName` parameter
-
+- Add `@KData` annotation to your *raw* data class.
+- Pass the name that will be the name of the valid data class to `validatedClassName` parameter, or if you're not specified the `validatedClassName` the default validatedClassName will be _raw_ data class name with "Validated"
+ postfix.
 ```kotlin
 // Your newly created valid data class will be named "LoginUiData"
 @KData(validatedClassName = "LoginUiData") 
@@ -79,8 +79,9 @@ data class LoginResponse (
 )
 ```
 ### Second
-- Tell `@Kdata` which field to validate by using `@KData.Field` annotation
-- Pass the name that will be the name of the field in the validated data class to `validatedFieldName` parameter
+- Tell `@Kdata` which field to validate by using `@KData.Field` annotation.
+- Pass the name that will be the name of the field in the validated data class to `validatedFieldName` parameter, or if you're not specified the `validatedFieldName` the default validatedFieldName will be _raw_ field name with "Validated"
+postfix.
 
 ```kotlin
 // "first_name" Field in the validated data class will be named "firstName" 
