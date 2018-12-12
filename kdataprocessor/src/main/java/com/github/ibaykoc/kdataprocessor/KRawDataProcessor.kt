@@ -3,27 +3,27 @@ package com.github.ibaykoc.kdataprocessor
 import com.github.ibaykoc.kdataannotation.KData
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import java.io.File
+import java.util.*
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import javax.lang.model.util.ElementFilter
-import kotlin.reflect.jvm.internal.impl.builtins.jvm.JavaToKotlinClassMap
-import kotlin.reflect.jvm.internal.impl.name.FqName
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import java.io.File
-import java.util.*
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
+import javax.lang.model.util.ElementFilter
+import javax.tools.Diagnostic
+import kotlin.reflect.jvm.internal.impl.builtins.jvm.JavaToKotlinClassMap
+import kotlin.reflect.jvm.internal.impl.name.FqName
 
 data class ValidClass(
     val name: String,
     val packageName: String,
-    val fields: MutableList<Field> = mutableListOf(),
-    val toValidateField: MutableList<String> = mutableListOf()
+    val fields: MutableList<Field> = mutableListOf()
 ) {
-    data class Field(val name: String, val typeName: TypeName, val isNullable: Boolean)
+    data class Field(val name: String, val typeName: TypeName, val rawAbsolutePath: String, val isNullable: Boolean)
 }
 
 @AutoService(Processor::class)
@@ -39,7 +39,11 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
     override fun process(p0: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         roundEnv.getElementsAnnotatedWith(KData::class.java).forEach { kRawDataAnnotatedClass ->
             val packageName = processingEnv.elementUtils.getPackageOf(kRawDataAnnotatedClass).toString()
-            val validatedClassName = kRawDataAnnotatedClass.getAnnotation(KData::class.java).validatedClassName
+            val className = kRawDataAnnotatedClass.simpleName
+            val annotationValidatedClassName =
+                kRawDataAnnotatedClass.getAnnotation(KData::class.java).validatedClassName
+            val validatedClassName =
+                if (annotationValidatedClassName.isBlank()) "${className}Validated" else annotationValidatedClassName
             val validClass = ValidClass(validatedClassName, packageName)
             val fieldsToTraverse = Stack<Pair<String, List<VariableElement>>>()
             fieldsToTraverse.push(Pair("", ElementFilter.fieldsIn(kRawDataAnnotatedClass.enclosedElements)))
@@ -52,15 +56,23 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
                         val root = currentFieldsToTraverse.first + fieldName + "?."
                         fieldsToTraverse.push(Pair(root, ElementFilter.fieldsIn(childFields)))
                     } else if (validateAnnotatedField.getAnnotation(KData.Field::class.java) != null) {
+                        val annotationFieldName =
+                            validateAnnotatedField.getAnnotation(KData.Field::class.java).validatedFieldName
                         val fieldName = validateAnnotatedField.toString()
-                        val validateFieldName = validateAnnotatedField.getAnnotation(KData.Field::class.java).validatedFieldName
+                        val validateFieldName =
+                            if (annotationFieldName.isBlank()) "${fieldName}Validated" else annotationFieldName
                         val allowNull = validateAnnotatedField.getAnnotation(KData.Field::class.java).allowNull
                         val fieldType = validateAnnotatedField.asType().asTypeName().javaToKotlinType()
                         val root = currentFieldsToTraverse.first
-                        validClass.fields.add(ValidClass.Field(validateFieldName, fieldType, allowNull))
-                        var validateFieldStatement = "$root$fieldName?"
-                        if(allowNull) validateFieldStatement = validateFieldStatement.replace("?","")
-                        validClass.toValidateField.add(validateFieldStatement)
+                        val rawFieldAbsolutePath = "$root$fieldName"
+                        validClass.fields.add(
+                            ValidClass.Field(
+                                validateFieldName,
+                                fieldType,
+                                rawFieldAbsolutePath,
+                                allowNull
+                            )
+                        )
                     }
                 }
             } while (!fieldsToTraverse.empty())
@@ -69,7 +81,21 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
                 addModifiers(KModifier.DATA)
                 val constructor = FunSpec.constructorBuilder().apply {
                     validClass.fields.forEach {
-                        addParameter(it.name, it.typeName.copy(nullable = it.isNullable))
+                        addParameter(
+                            if (it.isNullable)
+                                ParameterSpec.builder(
+                                    it.name,
+                                    it.typeName.copy(nullable = it.isNullable)
+                                )
+                                    .defaultValue("null")
+                                    .build()
+                            else
+                                ParameterSpec.builder(
+                                    it.name,
+                                    it.typeName.copy(nullable = it.isNullable)
+                                )
+                                    .build()
+                        )
                     }
                     build()
                 }.build()
@@ -85,20 +111,24 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
             val validateExtFunBuilder = FunSpec.builder("validate")
                 .receiver(kRawDataAnnotatedClass.asType().asTypeName())
                 .returns(ClassName(packageName, validClass.name).copy(nullable = true))
-            validClass.toValidateField.forEachIndexed { i, s ->
-                var condition = ""
-                if (i == 0) condition += "return "
-                condition += "$s.let"
-                validateExtFunBuilder.beginControlFlow(condition)
-            }
+                .addCode("return")
+            val condition = " if (" +
+                    validClass.fields.filter { !it.isNullable }
+                        .joinToString(
+                            separator = " && ",
+                            transform = { "${it.rawAbsolutePath} != null" }
+                        ) +
+                    ")"
+            validateExtFunBuilder.beginControlFlow(condition)
             validateExtFunBuilder.addStatement(
-                "return ${validClass.name}(${validClass.toValidateField.joinToString(
+                "${validClass.name}(${validClass.fields.joinToString(
                     separator = ",\n",
-                    transform = { it.replace("?", "") })})"
+                    transform = { it.rawAbsolutePath.replace("?", "") }
+                )})"
             )
-            validClass.toValidateField.forEach {
-                validateExtFunBuilder.endControlFlow()
-            }
+            validateExtFunBuilder.nextControlFlow("else")
+            validateExtFunBuilder.addStatement("null")
+            validateExtFunBuilder.endControlFlow()
 
             fileBuilder.addAnnotation(ClassName("", "Suppress(\"UNNECESSARY_SAFE_CALL\")"))
             fileBuilder.addType(validDataClass)
@@ -106,6 +136,10 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
 
             val kaptGeneratedDir = processingEnv.options["kapt.kotlin.generated"]
             fileBuilder.build().writeTo(File(kaptGeneratedDir, "${validClass.name}.kt"))
+            processingEnv.messager.printMessage(
+                Diagnostic.Kind.WARNING,
+                "${validClass.name} generated at $kaptGeneratedDir"
+            )
         }
         return true
     }
@@ -118,5 +152,12 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
         val className = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(toString()))?.asSingleFqName()?.asString()
         if (className == null) this
         else ClassName.bestGuess(className)
+    }
+
+    private fun warning(msg: String) {
+        processingEnv.messager.printMessage(
+            Diagnostic.Kind.WARNING,
+            msg
+        )
     }
 }

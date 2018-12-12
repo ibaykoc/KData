@@ -1,9 +1,7 @@
 package com.github.ibaykoc.kdatasample
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.github.ibaykoc.kdatasample.data.LoginResponse
-import com.github.ibaykoc.kdatasample.data.validate
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 

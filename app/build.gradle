@@ -22,16 +22,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    sourceSets {
+        test {
+            java.srcDirs += "build/generated/source/kaptKotlin/debugUnitTest"
+        }
+    }
 }
 
 dependencies {
     implementation project(':kdataannotation')
+    testImplementation project(':kdataannotation')
     kapt project(':kdataprocessor')
+    kaptTest project(':kdataprocessor')
+    kaptAndroidTest project(':kdataprocessor')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1-alpha01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1-alpha01'
 }
