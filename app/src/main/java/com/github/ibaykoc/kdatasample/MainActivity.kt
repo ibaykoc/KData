@@ -30,7 +30,11 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     response.body()?.forEach { raw ->
                         raw.validate()?.let { validData ->
-                            Log.d("MainActivity", validData.repoName)
+                            Log.d(
+                                "MainActivity", "repoName: ${validData.repoName}," +
+                                        " avatarUrl: ${validData.ownerValidated.avatarUrl}," +
+                                        " ownerName: ${validData.ownerValidated.name}"
+                            )
                         }
                     }
                 }

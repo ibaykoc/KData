@@ -6,7 +6,7 @@ annotation class KData(val validatedClassName: String = "") {
 
     @Retention(AnnotationRetention.SOURCE)
     @Target(AnnotationTarget.FIELD)
-    annotation class ParentField
+    annotation class ParentField(val validatedFieldName: String = "")
 
     @Retention(AnnotationRetention.SOURCE)
     @Target(AnnotationTarget.FIELD)

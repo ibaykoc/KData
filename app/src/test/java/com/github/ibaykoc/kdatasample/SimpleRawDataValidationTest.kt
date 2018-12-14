@@ -1,21 +1,12 @@
 package com.github.ibaykoc.kdatasample
 
-import com.github.ibaykoc.kdataannotation.KData
+import com.github.ibaykoc.kdatasample.data.SimpleRawData
+import com.github.ibaykoc.kdatasample.data.SimpleRawDataValidated
+import com.github.ibaykoc.kdatasample.data.validate
 import org.junit.Assert
 import org.junit.Test
 
 class SimpleRawDataValidationTest {
-
-    @KData
-    data class SimpleRawData(
-        @KData.Field(allowNull = true)
-        val status: Boolean?,
-        @KData.Field
-        val first_name: String?,
-        @KData.Field
-        val last_name: String?,
-        val last_update: String
-    )
 
     @Test
     fun `Test simple raw data valid`() {

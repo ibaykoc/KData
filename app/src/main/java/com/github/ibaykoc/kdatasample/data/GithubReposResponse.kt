@@ -111,6 +111,7 @@ data class GithubReposResponse(
     @SerializedName("open_issues_count")
     val openIssuesCount: Int?, // 0
     @SerializedName("owner")
+    @KData.ParentField
     val owner: Owner?,
     @SerializedName("private")
     val `private`: Boolean?, // false
