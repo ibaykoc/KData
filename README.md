@@ -154,8 +154,8 @@ Then add this two dependencies to your module:
 ```
   apply plugin: 'kotlin-kapt'
   ...
-  implementation 'com.github.ibaykoc.KData:kdataannotation:v0.1.0-alpha'
-  kapt 'com.github.ibaykoc.KData:kdataprocessor:v0.1.0-alpha''
+  implementation 'com.github.ibaykoc.KData:kdataannotation:v1.0.2'
+  kapt 'com.github.ibaykoc.KData:kdataprocessor:v1.0.2'
 ```
 
 PS: If you have any suggestions or bugs, please create issues or Pull Requests.
