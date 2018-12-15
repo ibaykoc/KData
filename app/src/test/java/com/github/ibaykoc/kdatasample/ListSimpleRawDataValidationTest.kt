@@ -31,7 +31,30 @@ class ListSimpleRawDataValidationTest {
                 )
             )
         )
+
+        val listSimpleRawData2 = ListSimpleRawData(
+            username = "Jane",
+            comments = null,
+            repositories = listOf(
+                ListSimpleRawData.Repository(
+                    "JaneRepos",
+                    star = 5
+                )
+            )
+        )
+
+        val expected2 = ListSimpleRawDataValidated(
+            usernameValidated = "Jane",
+            commentsValidated = null,
+            repositoriesValidated = listOf(
+                ListSimpleRawDataValidated.RepositoryValidated(
+                    nameValidated = "JaneRepos",
+                    starValidated = 5
+                )
+            )
+        )
         Assert.assertEquals(expected, listSimpleRawData.validate())
+        Assert.assertEquals(expected2, listSimpleRawData2.validate())
     }
 
     @Test

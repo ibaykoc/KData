@@ -6,7 +6,7 @@ import com.github.ibaykoc.kdataannotation.KData
 data class ListSimpleRawData(
     @KData.Field
     val username: String?,
-    @KData.Field
+    @KData.Field(allowNull = true)
     val comments: List<String?>?,
     @KData.ParentField
     val repositories: List<Repository?>?

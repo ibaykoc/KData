@@ -124,13 +124,19 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
                     val parameterizedTypeName =
                         (elementFields.asType().asTypeName() as ParameterizedTypeName).typeArguments.first()
                     fieldKotlinTypeName = parameterizedTypeName.javaToKotlinType()
-
+                    if (!isNativeType(parameterizedTypeName)) {
+                        error(
+                            "Collections of non native type should be annotated with @KData.ParentField " +
+                                    "{class: ${elementFields.enclosingElement}, field: $fieldName}"
+                        )
+                    }
                     kDataBlueprint.fields.add(
                         KDataBlueprint.Field(
                             name = validFieldName,
                             typeName = fieldKotlinTypeName,
                             rawAbsolutePath = currentPath,
-                            isList = isList
+                            isList = isList,
+                            isNullable = isNullable
                         )
                     )
                 } else {
@@ -170,7 +176,7 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
         val fileBuilder = FileSpec.builder(rootKDataBlueprint.packageName, rootKDataBlueprint.name)
         val kDataClassSpec = createKDataClassSpec(rootKDataBlueprint)
         val validateFunSpecs = createValidateFunSpec(rootKDataBlueprint)
-        fileBuilder.addAnnotation(ClassName("", "Suppress(\"UNNECESSARY_SAFE_CALL\")"))
+//        fileBuilder.addAnnotation(ClassName("", "Suppress(\"UNNECESSARY_SAFE_CALL\")"))
         fileBuilder.addType(kDataClassSpec)
         validateFunSpecs.forEach { fileBuilder.addFunction(it) }
         val kaptGeneratedDir = processingEnv.options["kapt.kotlin.generated"]
@@ -225,19 +231,33 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
             val validateExtFunBuilder = FunSpec.builder("validate")
                 .receiver(currentKDataBlueprint.rawTypeName)
                 .returns(ClassName(currentKDataBlueprint.packageName, currentKDataBlueprint.name).copy(nullable = true))
-                .addCode("return")
-            val condition = " if (" +
+            currentKDataBlueprint.fields.forEach {
+                validateExtFunBuilder.addStatement(
+                    "val ${it.name} = ${it.rawAbsolutePath.last() +
+                            when {
+                                it.isList -> "?.mapNotNull { it" + if (it.isParent) {
+                                    "?.validate()"
+                                } else {
+                                    ""
+                                } + " }"
+                                it.isParent -> "?.validate()"
+                                else -> ""
+                            }
+                    }"
+                )
+            }
+            val condition = "return if (" +
                     currentKDataBlueprint.fields.filter { !it.isNullable }
                         .joinToString(
                             separator = " && ",
-                            transform = { "${it.rawAbsolutePath.last() + if (it.isParent && !it.isList) "?.validate()" else ""}  != null" }
+                            transform = { "${it.name}  != null" }
                         ) +
                     ")"
             validateExtFunBuilder.beginControlFlow(condition)
             validateExtFunBuilder.addStatement(
                 "${currentKDataBlueprint.name}(${currentKDataBlueprint.fields.joinToString(
                     separator = ",\n",
-                    transform = { it.rawAbsolutePath.last() + if (it.isList) ".mapNotNull { it${if (it.isParent) "?.validate()" else ""} }" else if (it.isParent) ".validate()!!" else "" }
+                    transform = { it.name }
                 )})"
             )
             validateExtFunBuilder.nextControlFlow("else")
@@ -261,6 +281,17 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
             Diagnostic.Kind.WARNING,
             msg
         )
+    }
+
+    private fun error(msg: String) {
+        processingEnv.messager.printMessage(
+            Diagnostic.Kind.ERROR,
+            msg
+        )
+    }
+
+    private fun isNativeType(typeName: TypeName): Boolean {
+        return (typeName as ClassName).packageName.contains("java")
     }
 
     private fun TypeName.javaToKotlinType(): TypeName = if (this is ParameterizedTypeName) {
