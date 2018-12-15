@@ -19,9 +19,6 @@
     <img src="https://img.shields.io/github/release/Ibaykoc/KData.svg"
       alt="Release version" />
   </a>
-  <!-- All downloads -->
-    <img src="https://img.shields.io/github/downloads/Ibaykoc/KData/total.svg"
-      alt="All downloads" />
 </div>
 
 ------------
