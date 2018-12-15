@@ -9,11 +9,6 @@
 <br />
 
 <div align="center">
-  <!-- Maintenance -->
-  <a href="https://GitHub.com/Ibaykoc/Kdata/graphs/commit-activity">
-    <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg"
-      alt="Maintenance" />
-  </a>
   <!-- Release version -->
   <a href="https://GitHub.com/Ibaykoc/KData/releases/">
     <img src="https://img.shields.io/github/release/Ibaykoc/KData.svg"
