@@ -1,7 +1,7 @@
 package com.github.ibaykoc.kdatasample
 
 import com.github.ibaykoc.kdatasample.data.ListSimpleRawData
-import com.github.ibaykoc.kdatasample.data.ListSimpleRawDataValidated
+import com.github.ibaykoc.kdatasample.data.ListSimpleRawDataValid
 import com.github.ibaykoc.kdatasample.data.validate
 import org.junit.Assert
 import org.junit.Test
@@ -9,7 +9,7 @@ import org.junit.Test
 class ListSimpleRawDataValidationTest {
 
     @Test
-    fun `Test simple raw data valid`() {
+    fun `Test list simple raw data valid`() {
         val listSimpleRawData = ListSimpleRawData(
             username = "Jane",
             comments = listOf("First Comment"),
@@ -21,13 +21,13 @@ class ListSimpleRawDataValidationTest {
             )
         )
 
-        val expected = ListSimpleRawDataValidated(
-            usernameValidated = "Jane",
-            commentsValidated = listOf("First Comment"),
-            repositoriesValidated = listOf(
-                ListSimpleRawDataValidated.RepositoryValidated(
-                    nameValidated = "JaneRepos",
-                    starValidated = 5
+        val expected = ListSimpleRawDataValid(
+            username = "Jane",
+            comments = listOf("First Comment"),
+            repositories = listOf(
+                ListSimpleRawDataValid.Repository(
+                    name = "JaneRepos",
+                    star = 5
                 )
             )
         )
@@ -43,13 +43,13 @@ class ListSimpleRawDataValidationTest {
             )
         )
 
-        val expected2 = ListSimpleRawDataValidated(
-            usernameValidated = "Jane",
-            commentsValidated = null,
-            repositoriesValidated = listOf(
-                ListSimpleRawDataValidated.RepositoryValidated(
-                    nameValidated = "JaneRepos",
-                    starValidated = 5
+        val expected2 = ListSimpleRawDataValid(
+            username = "Jane",
+            comments = null,
+            repositories = listOf(
+                ListSimpleRawDataValid.Repository(
+                    name = "JaneRepos",
+                    star = 5
                 )
             )
         )

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.github.ibaykoc.kdatasample.data.GithubReposResponse
-import com.github.ibaykoc.kdatasample.data.validate
+//import com.github.ibaykoc.kdatasample.data.validate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,28 +22,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        githubApi.listRepos("ibaykoc").enqueue(
-            object : Callback<List<GithubReposResponse>> {
-                override fun onResponse(
-                    call: Call<List<GithubReposResponse>>,
-                    response: Response<List<GithubReposResponse>>
-                ) {
-                    response.body()?.forEach { raw ->
-                        raw.validate()?.let { validData ->
-                            Log.d(
-                                "MainActivity", "repoName: ${validData.repoName}," +
-                                        " avatarUrl: ${validData.ownerValidated.avatarUrl}," +
-                                        " ownerName: ${validData.ownerValidated.name}"
-                            )
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<List<GithubReposResponse>>, t: Throwable) {
-                    Log.d("MainActivity", "API Call Failed: ${t.localizedMessage}")
-                }
-
-            }
-        )
+//        githubApi.listRepos("ibaykoc").enqueue(
+//            object : Callback<List<GithubReposResponse>> {
+//                override fun onResponse(
+//                    call: Call<List<GithubReposResponse>>,
+//                    response: Response<List<GithubReposResponse>>
+//                ) {
+//                    response.body()?.forEach { raw ->
+//                        raw.validate()?.let { validData ->
+//                            Log.d(
+//                                "MainActivity", "repoName: ${validData.repoName}," +
+//                                        " avatarUrl: ${validData.ownerValidated.avatarUrl}," +
+//                                        " ownerName: ${validData.ownerValidated.name}"
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<List<GithubReposResponse>>, t: Throwable) {
+//                    Log.d("MainActivity", "API Call Failed: ${t.localizedMessage}")
+//                }
+//
+//            }
+//        )
     }
 }

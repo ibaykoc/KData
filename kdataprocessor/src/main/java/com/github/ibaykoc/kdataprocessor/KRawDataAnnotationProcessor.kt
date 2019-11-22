@@ -75,7 +75,7 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
                             name = validFieldName,
                             typeName = ClassName(
                                 fieldPackageName,
-                                (parameterizedTypeName as ClassName).simpleName + "Validated"
+                                (parameterizedTypeName as ClassName).simpleName
                             ),
                             rawAbsolutePath = currentPath,
                             isList = isList,
@@ -98,7 +98,7 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
                             name = validFieldName,
                             typeName = ClassName(
                                 fieldPackageName,
-                                (elementFields.asType().asTypeName() as ClassName).simpleName + "Validated"
+                                (elementFields.asType().asTypeName() as ClassName).simpleName
                             ),
                             rawAbsolutePath = currentPath,
                             isList = isList,
@@ -159,7 +159,8 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
     private fun namingKData(element: Element): String {
         val userDefinedName = when {
             element.getAnnotation(KData::class.java) != null -> {
-                element.getAnnotation(KData::class.java).validatedClassName
+                val userDefinedName = element.getAnnotation(KData::class.java).validatedClassName
+                userDefinedName + if(userDefinedName.isBlank()) "${element.simpleName}Valid" else ""
             }
             element.getAnnotation(KData.ParentField::class.java) != null -> {
                 element.getAnnotation(KData.ParentField::class.java).validatedFieldName
@@ -169,7 +170,7 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
             }
             else -> ""
         }
-        return if (userDefinedName.isBlank()) "${element.simpleName}Validated" else userDefinedName
+        return if (userDefinedName.isBlank()) "${element.simpleName}" else userDefinedName
     }
 
     private fun generateFile(rootKDataBlueprint: KDataBlueprint) {
@@ -255,7 +256,7 @@ class KRawDataAnnotationProcessor : AbstractProcessor() {
                     ")"
             validateExtFunBuilder.beginControlFlow(condition)
             validateExtFunBuilder.addStatement(
-                "${currentKDataBlueprint.name}(${currentKDataBlueprint.fields.joinToString(
+                "${currentKDataBlueprint.packageName}.${currentKDataBlueprint.name}(${currentKDataBlueprint.fields.joinToString(
                     separator = ",\n",
                     transform = { it.name }
                 )})"

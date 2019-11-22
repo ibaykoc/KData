@@ -1,7 +1,7 @@
 package com.github.ibaykoc.kdatasample
 
 import com.github.ibaykoc.kdatasample.data.MultiNestedRawData
-import com.github.ibaykoc.kdatasample.data.MultiNestedRawDataValidated
+import com.github.ibaykoc.kdatasample.data.MultiNestedRawDataValid
 import com.github.ibaykoc.kdatasample.data.validate
 import org.junit.Assert
 import org.junit.Test
@@ -20,12 +20,12 @@ class MultiNestedRawDataValidationTest {
             last_update = "01-01-2001 : 00:00"
         )
         println(multiNestedRawData.validate())
-        val expected = MultiNestedRawDataValidated(
-            accountValidated = MultiNestedRawDataValidated.AccountValidated(
-                statusValidated = null,
-                first_nameValidated = "Jane",
-                last_nameValidated = "Doe",
-                dobValidated = MultiNestedRawDataValidated.AccountValidated.DOBValidated(
+        val expected = MultiNestedRawDataValid(
+            account = MultiNestedRawDataValid.Account(
+                status = null,
+                first_name = "Jane",
+                last_name = "Doe",
+                dob = MultiNestedRawDataValid.Account.DOB(
                     1, 1, 1999
                 )
             )

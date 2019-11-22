@@ -1,7 +1,7 @@
 package com.github.ibaykoc.kdatasample
 
 import com.github.ibaykoc.kdatasample.data.SimpleRawData
-import com.github.ibaykoc.kdatasample.data.SimpleRawDataValidated
+import com.github.ibaykoc.kdatasample.data.SimpleRawDataValid
 import com.github.ibaykoc.kdatasample.data.validate
 import org.junit.Assert
 import org.junit.Test
@@ -17,9 +17,9 @@ class SimpleRawDataValidationTest {
             last_update = "01-01-2001 : 00:00"
         )
         println(simpleRawData.validate())
-        val expected = SimpleRawDataValidated(
-            first_nameValidated = "Jane",
-            last_nameValidated = "Doe"
+        val expected = SimpleRawDataValid(
+            first_name = "Jane",
+            last_name = "Doe"
         )
 
         Assert.assertEquals(expected, simpleRawData.validate())
@@ -60,10 +60,10 @@ class SimpleRawDataValidationTest {
             last_name = "Doe",
             last_update = "01-01-2001 : 00:00"
         )
-        val expected = SimpleRawDataValidated(
-            statusValidated = null,
-            first_nameValidated = "Jane",
-            last_nameValidated = "Doe"
+        val expected = SimpleRawDataValid(
+            status = null,
+            first_name = "Jane",
+            last_name = "Doe"
         )
         val simpleRawData2 = SimpleRawData(
             status = true,
@@ -71,10 +71,10 @@ class SimpleRawDataValidationTest {
             last_name = "Doe",
             last_update = "01-01-2001 : 00:00"
         )
-        val expected2 = SimpleRawDataValidated(
-            statusValidated = true,
-            first_nameValidated = "Jane",
-            last_nameValidated = "Doe"
+        val expected2 = SimpleRawDataValid(
+            status = true,
+            first_name = "Jane",
+            last_name = "Doe"
         )
 
         Assert.assertEquals(expected, simpleRawData.validate())

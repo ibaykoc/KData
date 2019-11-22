@@ -1,7 +1,7 @@
 package com.github.ibaykoc.kdatasample
 
 import com.github.ibaykoc.kdatasample.data.NestedRawData
-import com.github.ibaykoc.kdatasample.data.NestedRawDataValidated
+import com.github.ibaykoc.kdatasample.data.NestedRawDataValid
 import com.github.ibaykoc.kdatasample.data.validate
 import org.junit.Assert
 import org.junit.Test
@@ -19,11 +19,11 @@ class NestedRawDataValidationTest {
             last_update = "01-01-2001 : 00:00"
         )
         println(nestedRawData.validate())
-        val expected = NestedRawDataValidated(
-            accountValidated = NestedRawDataValidated.AccountValidated(
-                statusValidated = null,
-                first_nameValidated = "Jane",
-                last_nameValidated = "Doe"
+        val expected = NestedRawDataValid(
+            account = NestedRawDataValid.Account(
+                status = null,
+                first_name = "Jane",
+                last_name = "Doe"
             )
         )
 
@@ -73,11 +73,11 @@ class NestedRawDataValidationTest {
             ),
             last_update = "01-01-2001 : 00:00"
         )
-        val expected = NestedRawDataValidated(
-            accountValidated = NestedRawDataValidated.AccountValidated(
-                statusValidated = null,
-                first_nameValidated = "Jane",
-                last_nameValidated = "Doe"
+        val expected = NestedRawDataValid(
+            account = NestedRawDataValid.Account(
+                status = null,
+                first_name = "Jane",
+                last_name = "Doe"
             )
         )
         val nestedRawData2 = NestedRawData(
@@ -88,11 +88,11 @@ class NestedRawDataValidationTest {
             ),
             last_update = "01-01-2001 : 00:00"
         )
-        val expected2 = NestedRawDataValidated(
-            accountValidated = NestedRawDataValidated.AccountValidated(
-                statusValidated = true,
-                first_nameValidated = "Jane",
-                last_nameValidated = "Doe"
+        val expected2 = NestedRawDataValid(
+            account = NestedRawDataValid.Account(
+                status = true,
+                first_name = "Jane",
+                last_name = "Doe"
             )
         )
         Assert.assertEquals(expected, nestedRawData.validate())
