@@ -151,5 +151,3 @@ Then add this two dependencies to your module:
 ```
 
 PS: If you have any suggestions or bugs, please create issues or Pull Requests.
-
-**Enjoy!**
